@@ -6,43 +6,49 @@ export async function main(ns) {
     for (i=1; i<=maxCount; i++)
     {
 		let thisI = await findDivisors(ns, i);
+		//ns.print("Divisors found for " + i + " are " + thisI);	
 		await insertionSort(ns, thisI);
-		let l = thisI.length
+		//ns.print("Divisors found and sorted for " + i + " are " + thisI);	
 		let thisIString = null;
-		for (j=1; j<=l; j++){
-			thisIString = await fizzbuzzchecks(ns, thisI[j]);		
-		}
+		thisIString = await fizzbuzzbuilder(ns, thisI);
+		//ns.print("Builder returned " + thisIString);	
 		if(thisIString == null){
+			fizzbuzzstring += " "
 			fizzbuzzstring += i
-		} else {
+		} 
+		if (thisIString != null) {
+			fizzbuzzstring += " "
 			fizzbuzzstring += thisIString
 		}
-		
+				
     }
 	ns.print(fizzbuzzstring);
 	ns.tprint(fizzbuzzstring);
-	
-	
-	let divisorslist = await findDivisors(ns, maxCount);
-	ns.tprint(divisorslist);
-	await insertionSort(ns, divisorslist); //sorts exisiting array, no need for secodnary array.
-	ns.tprint(divisorslist);
-
 }
 
+
+//returns for each divisor that is a multiple  (IE FizzFizz for 6, 3 and 6 both returning 1 fizz)
 /** @param {NS} ns */
-        export async function fizzbuzzchecks(ns, i){
-			// number divisible by 3? print 'Fizz' in place of the number
-            if (i%3 == 0) {return "Fizz" } 
-			// number divisible by 5, print 'Buzz' in place of the number
-            if (i%5 == 0) {return "Buzz"} 
-			// number divisible by 7, print 'Woof' in place of the number
-			if (i%7 == 0) {return "Woof"}
-			return null
-			/** Arbitray Case
-			 * // number divisible by somenumber, print 'something' in place of the number
-			 * if (i%somenumber == 0) {return "something"}
-			 */		
+        export async function fizzbuzzbuilder(ns, fizzbuzzarray){
+			// itterate through array of divisors to lenght     Ex: [1,2,4,5,10,20,25,50,100]
+			let builtreturn;
+			let pos = 0;
+			let length = fizzbuzzarray.length;
+			for(let j=1; j<=length; j++){
+				let thisreturn = null;
+				let value = fizzbuzzarray[pos]
+				thisreturn = await fizzbuzzchecks(ns, value)
+				if (!(thisreturn === null)){
+					if (typeof builtreturn === 'undefined'){
+						builtreturn = thisreturn;
+					} else {	
+						builtreturn = builtreturn + thisreturn;
+						}
+					}
+				pos++;
+			}
+			if (!(typeof builtreturn === 'undefined')){return builtreturn}
+			return null	
         }
 
 
@@ -65,9 +71,6 @@ export async function main(ns) {
 
 
 //Insertion Sort (efficent for small arrays) Time Complexity: O(N^2) 
-
-
-
 /** @param {NS} ns */
     export async function insertionSort(ns, arr){
 	let n = arr.length;		
@@ -88,3 +91,18 @@ export async function main(ns) {
         arr[j + 1] = key; 
     } 
 }
+
+/** @param {NS} ns */
+        export async function fizzbuzzchecks(ns, i){
+			// number divisible by 3? print 'Fizz' in place of the number
+            if (i%3 == 0) {return "Fizz" } 
+			// number divisible by 5, print 'Buzz' in place of the number
+            if (i%5 == 0) {return "Buzz"} 
+			// number divisible by 7, print 'Woof' in place of the number
+			if (i%7 == 0) {return "Woof"}
+			return null
+			/** Arbitray Case
+			 * // number divisible by somenumber, print 'something' in place of the number
+			 * if (i%somenumber == 0) {return "something"}
+			 */		
+        }
